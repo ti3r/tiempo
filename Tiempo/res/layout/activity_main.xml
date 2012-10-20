@@ -4,6 +4,7 @@
     android:layout_height="match_parent" >
 <NumberPicker android:id="@+id/main_hours_number_picker"
     android:layout_width="wrap_content" android:layout_height="wrap_content"
+    android:solidColor="@android:color/widget_edittext_dark"
     />
 
 <Button
@@ -14,6 +15,27 @@
     android:layout_below="@+id/main_hours_number_picker"
     android:layout_marginTop="25dp"
     android:onClick="startTimer"
-    android:text="Start" />
+    android:text="@string/start" />
+
+<NumberPicker
+    android:id="@+id/main_minutes_number_picker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@+id/main_btn_start"
+    android:layout_toRightOf="@+id/main_hours_number_picker" />
+
+<NumberPicker
+    android:id="@+id/main_seconds_number_picker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/main_minutes_number_picker" 
+    android:layout_alignParentTop="true" />
+
+<NumberPicker
+    android:id="@+id/main_millis_number_picker"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@+id/main_seconds_number_picker" 
+    android:layout_alignParentTop="true" />
 
 </RelativeLayout>
