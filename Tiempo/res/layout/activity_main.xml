@@ -38,4 +38,13 @@
     android:layout_toRightOf="@+id/main_seconds_number_picker" 
     android:layout_alignParentTop="true" />
 
+<CheckBox
+    android:id="@+id/main_loop_alarm_check"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/main_btn_start"
+    android:layout_alignBaseline="@id/main_btn_start"
+    android:text="loop Alarm"
+    />
+
 </RelativeLayout>

@@ -7,28 +7,30 @@ import static org.blanco.android.tiempo.utils.TimeConstants.MIN_MAX_SECS;
 import static org.blanco.android.tiempo.utils.TimeConstants.SEC_MAX_MILLIS;
 import static org.blanco.android.tiempo.utils.TimeConstants.ZERO;
 
-import org.blanco.android.tiempo.utils.TimerAsyncTask;
+import org.blanco.android.tiempo.runnables.TimeOutListener;
+import org.blanco.android.tiempo.runnables.ToastTimeOutRunnable;
 
 import roboguice.activity.RoboActivity;
 import roboguice.inject.InjectView;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Handler.Callback;
-import android.os.Message;
-import android.os.ResultReceiver;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.NumberPicker;
-import android.widget.Toast;
 
-public class MainActivity extends RoboActivity {
+public class MainActivity extends RoboActivity implements TimeOutListener {
 
 	@InjectView(R.id.main_hours_number_picker) NumberPicker hours;
 	@InjectView(R.id.main_minutes_number_picker) NumberPicker minutes;
 	@InjectView(R.id.main_seconds_number_picker) NumberPicker seconds;
 	@InjectView(R.id.main_millis_number_picker) NumberPicker millis;
 	@InjectView(R.id.main_btn_start) Button bntStart;
+	@InjectView(R.id.main_loop_alarm_check) CheckBox chkLoop;
+	
+	
+	Handler handler = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,7 @@ public class MainActivity extends RoboActivity {
         seconds.setMaxValue(MIN_MAX_SECS);
         millis.setMaxValue(SEC_MAX_MILLIS);
         millis.setMinValue(ZERO);
+        handler = new Handler();
     }
 
     @Override
@@ -64,17 +67,29 @@ public class MainActivity extends RoboActivity {
     	int mins = minutes.getValue();
     	int secs = seconds.getValue();
     	int mills = millis.getValue();
-    	ResultReceiver res = new ResultReceiver(new Handler(new Callback() {
-			
-			@Override
-			public boolean handleMessage(Message msg) {
-				Bundle b = msg.getData();
-				Toast.makeText(getApplicationContext(), b.toString(), 500).show();
-				return true;
-			}
-		}));
-    	TimerAsyncTask timer = new TimerAsyncTask(100, res);
-    	timer.execute();
+    	
+    	long time = (mills*100) + ( secs * 1000) + (mins * 60000) + (hrs * 360000);
+    	postTimeOutAlarm(time);
     }
+    
+    public void postTimeOutAlarm(long time){
+    	hours.setEnabled(false);minutes.setEnabled(false); seconds.setEnabled(false);
+    	millis.setEnabled(false);
+    	
+    	ToastTimeOutRunnable runnable = new ToastTimeOutRunnable(getBaseContext(), time);
+    	runnable.setListener(this);
+    	handler.postDelayed(runnable, time);
+    	
+    }
+
+	@Override
+	public void onTimeOutComplete(Long time) {
+		if (chkLoop != null && chkLoop.isChecked()){
+			postTimeOutAlarm(time);
+		}else{
+			hours.setEnabled(true);minutes.setEnabled(true); seconds.setEnabled(true);
+	    	millis.setEnabled(true);
+		}
+	}
     
 }
